@@ -1,59 +1,43 @@
+import logging
+from telegram import Update
+from telegram.ext import filters,ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler
+import Config
 
-import asyncio
-from email.policy import default
-import telegram
-import Config as c
-import time
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
+)
 
-config = c.M
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="Bienvenido al Bot")
 
-async def main():
-    '''Configuracion del robot'''
-    bot = telegram.Bot(config.MY_TOKEN_BOT)
-    # lista  = list(bot.get_updates())
-    # print(lista[0])
-    # bot.send_message(config.MY_USER_ID, 'Hello')
-    # 
-    mensaje_actual = ['0', 0]
-    # writer = open('./BotTg/db.txt', 'w')
-
-    while True:
-        time.sleep(1)
-        #Esta es la DataBase, la cual va almacenando y sobreescribiendo x datos para identificar
-        #que el mensaje sea diferente.
-        reader = open('./BotTg/db.txt')
-        
-        recibido = bot.get_updates()
-        request_data = recibido[len(recibido)-1]
-        chat_id = request_data.message.chat_id
-        msg_current = request_data.message.text
-        id_msg = request_data.message.message_id
-
-        #Switch creado para poder agregar cualquier tipo de comando especiales
-        match msg_current:
-            case '/start':
-                if (readers := open('./BotTg/db.txt').readlines()[0]) != str(id_msg) and msg_current != 'terminar':
-                    writer = open('./BotTg/db.txt', 'w')
-                    writer.write(str(id_msg))
-                    writer.close()
-                    bot.send_message(config.MY_USER_ID, 'Bienvenido a Bot Telegram')
-            case 'terminar':
-                if reader.read(10) != str(id_msg) and msg_current == 'terminar':
-            # print('File: ' + str(reader.read(30)) + ' Server: ' + str(id_msg))
-                    writer = open('./BotTg/db.txt', 'w')
-            # print(request_data.message.message_id)
-                    writer.write(str(id_msg))
-                    writer.close()
-            case _:
-                if (readers := open('./BotTg/db.txt').readlines()[0]) != str(id_msg) and msg_current != 'terminar':
-                    writer = open('./BotTg/db.txt', 'w')
-                    writer.write(str(id_msg))
-                    writer.close()
-                    bot.send_message(config.MY_USER_ID, msg_current)
-
+async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=update.message.text)
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    application = ApplicationBuilder().token(Config.M.MY_TOKEN_BOT).build()
+    
+    start_handler = CommandHandler('start', start)
+
+    echo_handler = MessageHandler(filters.TEXT & (~filters.COMMAND), echo)
+
+
+    application.add_handler(start_handler)
+
+    application.add_handler(echo_handler)
+    
+    application.run_polling()
+
+# import logging
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
+)
+
+# application = ApplicationBuilder().token('5688833678:AAFFVG7lLa5wvJmlXyLMoeCw9BFjD6xoL-U').build()
+
+# if __name__ == '__main__':
+#     asyncio.run(main())
 
 # {'update_id': 451297761, 'message': {'supergroup_chat_created': False, 'delete_chat_photo': False, 
 # 'channel_chat_created': False, 'text': 'terminar', 'date': 1662270341, 'caption_entities': [], 'chat': {'last_name': 'Mood', 'type': 'private', 'username': 'arabeltz', 'first_name': 'Moor', 'id': 1822798056}, 'new_chat_photo': [], 'message_id': 182, 'group_chat_created': False, 'photo': [], 'entities': [], 'new_chat_members': [], 'from': {'first_name': 'Moor', 'last_name': 'Mood', 'language_code': 'es', 'username': 'arabeltz', 'is_bot': False, 'id': 1822798056}}}
