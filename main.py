@@ -19,13 +19,17 @@ async def main():
 
     while True:
         time.sleep(1)
+        #Esta es la DataBase, la cual va almacenando y sobreescribiendo x datos para identificar
+        #que el mensaje sea diferente.
         reader = open('./BotTg/db.txt')
+        
         recibido = bot.get_updates()
         request_data = recibido[len(recibido)-1]
         chat_id = request_data.message.chat_id
         msg_current = request_data.message.text
         id_msg = request_data.message.message_id
 
+        #Switch creado para poder agregar cualquier tipo de comando especiales
         match msg_current:
             case '/start':
                 if (readers := open('./BotTg/db.txt').readlines()[0]) != str(id_msg) and msg_current != 'terminar':
