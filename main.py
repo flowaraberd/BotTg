@@ -32,20 +32,20 @@ async def main():
         #Switch creado para poder agregar cualquier tipo de comando especiales
         match msg_current:
             case '/start':
-                if (readers := open('./BotTg/db.txt').readlines()[0]) != str(id_msg) and msg_current != 'terminar':
+                if (readers := open('./BotTg/db.txt').readlines()[0]) != str(id_msg) and msg_current != '/terminar':
                     writer = open('./BotTg/db.txt', 'w')
                     writer.write(str(id_msg))
                     writer.close()
                     bot.send_message(config.MY_USER_ID, 'Bienvenido a Bot Telegram')
-            case 'terminar':
-                if reader.read(10) != str(id_msg) and msg_current == 'terminar':
+            case '/terminar':
+                if reader.read(10) != str(id_msg) and msg_current == '/terminar':
             # print('File: ' + str(reader.read(30)) + ' Server: ' + str(id_msg))
                     writer = open('./BotTg/db.txt', 'w')
             # print(request_data.message.message_id)
                     writer.write(str(id_msg))
                     writer.close()
             case _:
-                if (readers := open('./BotTg/db.txt').readlines()[0]) != str(id_msg) and msg_current != 'terminar':
+                if (readers := open('./BotTg/db.txt').readlines()[0]) != str(id_msg) and msg_current != '/terminar':
                     writer = open('./BotTg/db.txt', 'w')
                     writer.write(str(id_msg))
                     writer.close()
