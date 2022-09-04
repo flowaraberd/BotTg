@@ -22,6 +22,7 @@ async def main():
         chat_id = request_data.message.chat_id
         msg_current = request_data.message.text
         fecha_msg = request_data.message.date
+        print(chat_id)
 
         if mensaje_actual[1] <= 0 and msg_current == 'terminar':
             mensaje_actual[0] = fecha_msg
