@@ -1,5 +1,6 @@
 
 import asyncio
+from email.policy import default
 import telegram
 import Config as c
 import time
@@ -14,30 +15,38 @@ async def main():
     # bot.send_message(config.MY_USER_ID, 'Hello')
     # 
     mensaje_actual = ['0', 0]
+    # writer = open('./BotTg/db.txt', 'w')
 
     while True:
         time.sleep(1)
+        reader = open('./BotTg/db.txt')
         recibido = bot.get_updates()
         request_data = recibido[len(recibido)-1]
         chat_id = request_data.message.chat_id
         msg_current = request_data.message.text
-        fecha_msg = request_data.message.date
-        print(chat_id)
+        id_msg = request_data.message.message_id
 
-        if mensaje_actual[1] <= 0 and msg_current == 'terminar':
-            mensaje_actual[0] = fecha_msg
-            mensaje_actual[1] = 1
+        match msg_current:
+            case '/start':
+                if (readers := open('./BotTg/db.txt').readlines()[0]) != str(id_msg) and msg_current != 'terminar':
+                    writer = open('./BotTg/db.txt', 'w')
+                    writer.write(str(id_msg))
+                    writer.close()
+                    bot.send_message(config.MY_USER_ID, 'Bienvenido a Bot Telegram')
+            case 'terminar':
+                if reader.read(10) != str(id_msg) and msg_current == 'terminar':
+            # print('File: ' + str(reader.read(30)) + ' Server: ' + str(id_msg))
+                    writer = open('./BotTg/db.txt', 'w')
+            # print(request_data.message.message_id)
+                    writer.write(str(id_msg))
+                    writer.close()
+            case _:
+                if (readers := open('./BotTg/db.txt').readlines()[0]) != str(id_msg) and msg_current != 'terminar':
+                    writer = open('./BotTg/db.txt', 'w')
+                    writer.write(str(id_msg))
+                    writer.close()
+                    bot.send_message(config.MY_USER_ID, msg_current)
 
-        if fecha_msg != mensaje_actual[0]:
-            if msg_current == 'terminar' and fecha_msg != mensaje_actual[0]:
-                print(msg_current[0], str(fecha_msg))
-                bot.send_message(chat_id, config.MSG_FINISH)
-                break
-            bot.send_message(chat_id, msg_current)
-            mensaje_actual[0] = fecha_msg
-        # print(request_data)
-
-# Esta es una liena de comentario hecha por DWIGHT
 
 if __name__ == '__main__':
     asyncio.run(main())
